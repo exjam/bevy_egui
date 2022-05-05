@@ -4,9 +4,9 @@ use bevy::{
     render::{
         render_graph::{Node, NodeRunError, RenderGraphContext},
         render_resource::{
-            std140::AsStd140, BindGroupLayout, BindGroupLayoutDescriptor, BindGroupLayoutEntry,
+            BindGroupLayout, BindGroupLayoutDescriptor, BindGroupLayoutEntry,
             BindingType, BlendComponent, BlendFactor, BlendOperation, BlendState, Buffer,
-            BufferAddress, BufferBindingType, BufferDescriptor, BufferSize, BufferUsages,
+            BufferAddress, BufferBindingType, BufferDescriptor, encase::ShaderType, BufferUsages,
             ColorTargetState, ColorWrites, Extent3d, FrontFace, IndexFormat, LoadOp,
             MultisampleState, Operations, PipelineLayoutDescriptor, PrimitiveState,
             RawFragmentState, RawRenderPipelineDescriptor, RawVertexBufferLayout, RawVertexState,
@@ -52,9 +52,7 @@ impl FromWorld for EguiPipeline {
                     ty: BindingType::Buffer {
                         ty: BufferBindingType::Uniform,
                         has_dynamic_offset: true,
-                        min_binding_size: Some(
-                            BufferSize::new(EguiTransform::std140_size_static() as u64).unwrap(),
-                        ),
+                        min_binding_size: Some(EguiTransform::min_size()),
                     },
                     count: None,
                 }],

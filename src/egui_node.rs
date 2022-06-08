@@ -322,8 +322,15 @@ impl Node for EguiNode {
 
         let egui_transforms = world.get_resource::<EguiTransforms>().unwrap();
 
-        let extracted_window =
-            &world.get_resource::<ExtractedWindows>().unwrap().windows[&self.window_id];
+        let extracted_window = match world
+            .get_resource::<ExtractedWindows>()
+            .unwrap()
+            .windows
+            .get(&self.window_id)
+        {
+            Some(id) => id,
+            None => return Ok(()),
+        };
         let swap_chain_texture = extracted_window.swap_chain_texture.as_ref().unwrap();
 
         let mut render_pass =

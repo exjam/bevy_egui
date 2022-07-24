@@ -8,11 +8,12 @@ use bevy::{
     render::{
         render_asset::RenderAssets,
         render_resource::{
-            BindGroup, BindGroupDescriptor, BindGroupEntry, BindingResource,
-            BufferId, DynamicUniformBuffer, encase::{ShaderType},
+            encase::ShaderType, BindGroup, BindGroupDescriptor, BindGroupEntry, BindingResource,
+            BufferId, DynamicUniformBuffer,
         },
         renderer::{RenderDevice, RenderQueue},
         texture::Image,
+        Extract,
     },
     utils::HashMap,
     window::WindowId,
@@ -53,12 +54,12 @@ impl ExtractedEguiTextures {
 
 pub(crate) fn extract_egui_render_data(
     mut commands: Commands,
-    mut egui_render_output: ResMut<HashMap<WindowId, EguiRenderOutput>>,
-    window_sizes: ResMut<HashMap<WindowId, WindowSize>>,
-    egui_settings: Res<EguiSettings>,
-    egui_context: Res<EguiContext>,
+    egui_render_output: Extract<Res<HashMap<WindowId, EguiRenderOutput>>>,
+    window_sizes: Extract<Res<HashMap<WindowId, WindowSize>>>,
+    egui_settings: Extract<Res<EguiSettings>>,
+    egui_context: Extract<Res<EguiContext>>,
 ) {
-    let render_output = std::mem::take(&mut *egui_render_output);
+    let render_output = egui_render_output.clone();
     commands.insert_resource(ExtractedRenderOutput(render_output));
     commands.insert_resource(ExtractedEguiSettings(egui_settings.clone()));
     commands.insert_resource(ExtractedEguiContext(egui_context.ctx.clone()));
@@ -67,8 +68,8 @@ pub(crate) fn extract_egui_render_data(
 
 pub(crate) fn extract_egui_textures(
     mut commands: Commands,
-    egui_context: Res<EguiContext>,
-    egui_managed_textures: ResMut<EguiManagedTextures>,
+    egui_context: Extract<Res<EguiContext>>,
+    egui_managed_textures: Extract<Res<EguiManagedTextures>>,
 ) {
     commands.insert_resource(ExtractedEguiTextures {
         egui_textures: egui_managed_textures

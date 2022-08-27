@@ -490,13 +490,16 @@ impl Plugin for EguiPlugin {
     }
 }
 
+/// EguiManagedTextures
 #[derive(Default)]
-pub(crate) struct EguiManagedTextures(HashMap<(WindowId, u64), EguiManagedTexture>);
+pub struct EguiManagedTextures(pub HashMap<(WindowId, u64), EguiManagedTexture>);
 
-pub(crate) struct EguiManagedTexture {
-    handle: Handle<Image>,
+/// EguiManagedTexture
+pub struct EguiManagedTexture {
+    /// handle
+    pub handle: Handle<Image>,
     /// Stored in full so we can do partial updates (which bevy doesn't support).
-    color_image: egui::ColorImage,
+    pub color_image: egui::ColorImage,
 }
 
 fn update_egui_textures(

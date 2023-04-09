@@ -29,7 +29,7 @@ fn linear_from_srgb(srgb: vec3<f32>) -> vec3<f32> {
 @vertex
 fn vs_main(in: VertexInput) -> VertexOutput {
     let position = in.position * transform.scale + transform.translation;
-    let color = vec4<f32>(linear_from_srgb(in.color.rgb), in.color.a);
+    let color = vec4<f32>(pow(linear_from_srgb(in.color.rgb), vec3<f32>(1.0 / 2.2)), in.color.a);
     return VertexOutput(vec4<f32>(position, 0.0, 1.0), color, in.uv);
 }
 
@@ -38,6 +38,5 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     let texture_color = textureSample(image_texture, image_sampler, in.uv);
     // This assumes that texture images are not premultiplied.
     let color = in.color * vec4<f32>(texture_color.rgb * texture_color.a, texture_color.a);
-
     return color;
 }

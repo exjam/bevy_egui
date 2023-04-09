@@ -448,7 +448,7 @@ pub(crate) fn color_image_as_bevy_image(egui_image: &egui::ColorImage) -> Image 
             },
             TextureDimension::D2,
             pixels,
-            TextureFormat::Rgba8UnormSrgb,
+            TextureFormat::Rgba8Unorm,
         )
     }
 }

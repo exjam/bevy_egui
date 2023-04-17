@@ -88,7 +88,7 @@ use bevy::{
         RenderSet,
     },
     utils::HashMap,
-    window::{PrimaryWindow, Window},
+    window::{PrimaryWindow, Window, CursorIcon},
 };
 use std::borrow::Cow;
 #[cfg(all(feature = "manage_clipboard", not(target_arch = "wasm32")))]
@@ -523,6 +523,14 @@ pub enum EguiSet {
     ProcessOutput,
 }
 
+/// The window icon requested by egui
+#[derive(Default, Resource)]
+pub struct EguiRequestedCursor
+{
+    /// The window icon requested by egui
+    pub cursor: CursorIcon,
+}
+
 impl Plugin for EguiPlugin {
     fn build(&self, app: &mut App) {
         let world = &mut app.world;
@@ -532,6 +540,7 @@ impl Plugin for EguiPlugin {
         world.init_resource::<EguiClipboard>();
         world.init_resource::<EguiUserTextures>();
         world.init_resource::<EguiMousePosition>();
+        world.init_resource::<EguiRequestedCursor>();
 
         app.add_startup_systems(
             (

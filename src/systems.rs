@@ -1,5 +1,5 @@
 use crate::{
-    EguiContext, EguiContextQuery, EguiInput, EguiMousePosition, EguiSettings, WindowSize,
+    EguiContext, EguiContextQuery, EguiInput, EguiMousePosition, EguiSettings, WindowSize, EguiRequestedCursor,
 };
 #[cfg(feature = "open_url")]
 use bevy::log;
@@ -330,7 +330,7 @@ pub fn process_output_system(
     mut contexts: Query<EguiContextQuery>,
     #[cfg(feature = "manage_clipboard")] mut egui_clipboard: ResMut<crate::EguiClipboard>,
     mut event: EventWriter<RequestRedraw>,
-    #[cfg(windows)] mut last_cursor_icon: Local<bevy::utils::HashMap<Entity, egui::CursorIcon>>,
+    mut requested_cursor: ResMut<EguiRequestedCursor>,
 ) {
     for mut context in contexts.iter_mut() {
         let ctx = context.ctx.get_mut();
@@ -353,21 +353,7 @@ pub fn process_output_system(
             egui_clipboard.set_contents(&platform_output.copied_text);
         }
 
-        let mut set_icon = || {
-            context.window.cursor.icon = egui_to_winit_cursor_icon(platform_output.cursor_icon)
-                .unwrap_or(bevy::window::CursorIcon::Default);
-        };
-
-        #[cfg(windows)]
-        {
-            let last_cursor_icon = last_cursor_icon.entry(context.window_entity).or_default();
-            if *last_cursor_icon != platform_output.cursor_icon {
-                set_icon();
-                *last_cursor_icon = platform_output.cursor_icon;
-            }
-        }
-        #[cfg(not(windows))]
-        set_icon();
+        requested_cursor.cursor = egui_to_winit_cursor_icon(platform_output.cursor_icon).unwrap_or(bevy::window::CursorIcon::Default);
 
         if repaint_after.is_zero() {
             event.send(RequestRedraw)
